@@ -3,9 +3,9 @@
 // Illustrations by: SAMji https://dribbble.com/SAMji_illustrator
 
 
-import * as React from 'react';
-import { StatusBar, FlatList, Image, Animated, Text, View, Dimensions, StyleSheet, TouchableOpacity } from 'react-native';
-const { width, height } = Dimensions.get('screen');
+import React ,{useRef} from 'react';
+import { StatusBar, Image, Animated, View, Dimensions, StyleSheet } from 'react-native';
+const { width } = Dimensions.get('screen');
 
 const data = [
     'https://cdn.dribbble.com/users/3281732/screenshots/11192830/media/7690704fa8f0566d572a085637dd1eee.jpg?compress=1&resize=1200x1200',
@@ -14,21 +14,19 @@ const data = [
     'https://cdn.dribbble.com/users/3281732/screenshots/11205211/media/44c854b0a6e381340fbefe276e03e8e4.jpg?compress=1&resize=1200x1200',
     'https://cdn.dribbble.com/users/3281732/screenshots/7003560/media/48d5ac3503d204751a2890ba82cc42ad.jpg?compress=1&resize=1200x1200',
     'https://cdn.dribbble.com/users/3281732/screenshots/6727912/samji_illustrator.jpeg?compress=1&resize=1200x1200',
-    'https://cdn.dribbble.com/users/3281732/screenshots/13661330/media/1d9d3cd01504fa3f5ae5016e5ec3a313.jpg?compress=1&resize=1200x1200'
-
+    'https://cdn.dribbble.com/users/3281732/screenshots/13661330/media/1d9d3cd01504fa3f5ae5016e5ec3a313.jpg?compress=1&resize=1200x1200',
 ];
 
 const imageW = width * 0.7;
 const imageH = imageW * 1.54;
 
 export default () => {
-	const scrollX = React.useRef(new Animated.Value(0)).current;
-
+	const scrollX = useRef(new Animated.Value(0)).current;
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#fff' }}>
+        <View style={styles.container}>
             <StatusBar hidden />
-			<View style={StyleSheet.absoluteFillObject} >
+			<View style={styles.backgroundImageContainer} >
 				{
 					data.map((image,index)=>{
 						const inputRange = [
@@ -44,7 +42,7 @@ export default () => {
 							<Animated.Image
 							key={`image-${index}`}
 								source={{uri:image}}
-								style={[StyleSheet.absoluteFillObject,{opacity:opacity}]}
+								style={[styles.backgroundImage,{opacity:opacity}]}
 								blurRadius={10}
 							/>
 						);
@@ -56,26 +54,12 @@ export default () => {
 				horizontal
 				pagingEnabled
 				keyExtractor={(_,index) => index.toString()}
-				onScroll={Animated.event(
-					[ { nativeEvent : { contentOffset : { x : scrollX } } } ],
-					{ useNativeDriver : true }
-					)}
+				showsHorizontalScrollIndicator={false}
+				onScroll={Animated.event( [ { nativeEvent : { contentOffset : { x : scrollX } } } ], { useNativeDriver : true } )}
 				renderItem={({item})=>{
 					return(
-						<View style={{
-							width,
-							justifyContent:'center',
-							alignItems:'center',
-						}} >
-							<Image
-								source={{uri:item}}
-								style={{
-									width:imageW,
-									height:imageH,
-									resizeMode:'cover',
-									borderRadius:16,
-								}}
-							/>
+						<View style={styles.flatListContainer} >
+							<Image source={{uri:item}} style={styles.image} />
 						</View>
 					);
 
@@ -84,3 +68,11 @@ export default () => {
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+	container : { flex: 1, backgroundColor: '#fff' } ,
+	flatListContainer : { width, justifyContent : 'center' , alignItems : 'center' } ,
+	backgroundImageContainer : StyleSheet.absoluteFillObject ,
+	backgroundImage : StyleSheet.absoluteFillObject ,
+	image : { width:imageW, height:imageH, resizeMode:'cover', borderRadius:16, } ,
+})
